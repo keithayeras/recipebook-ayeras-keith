@@ -1,78 +1,12 @@
-from django.shortcuts import render, HttpResponse
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 
-recipe_directory = {
-    "recipes": [
-        {
-            "id": 1,
-            "name": "Recipe 1",
-            "ingredients": [
-                {
-                    "name": "tomato",
-                    "quantity": "3pcs"
-                },
-                {
-                    "name": "onion",
-                    "quantity": "1pc"
-                },
-                {
-                    "name": "pork",
-                    "quantity": "1kg"
-                },
-                {
-                    "name": "water",
-                    "quantity": "1L"
-                },
-                {
-                    "name": "sinigang mix",
-                    "quantity": "1 packet"
-                }
-            ],
-            "link": "/recipe/1"
-        },
-        {
-            "id": 2,
-            "name": "Recipe 2",
-            "ingredients": [
-                {
-                    "name": "garlic",
-                    "quantity": "1 head"
-                },
-                {
-                    "name": "onion",
-                    "quantity": "1pc"
-                },
-                {
-                    "name": "vinegar",
-                    "quantity": "1/2cup"
-                },
-                {
-                    "name": "water",
-                    "quantity": "1 cup"
-                },
-                {
-                    "name": "salt",
-                    "quantity": "1 tablespoon"
-                },
-                {
-                    "name": "whole black peppers",
-                    "quantity": "1 tablespoon"
-                },
-                {
-                    "name": "pork",
-                    "quantity": "1 kilo"
-                }
-            ],
-            "link": "/recipe/2"
-        }
-    ]
-}
+from .models import Recipe
 
-def recipes_list(request):
-    return render(request, 'recipes_list.html', recipe_directory)
+class RecipesListView(ListView):
+    model = Recipe
+    template_name = 'recipes_list.html'
 
-def recipe_info(request, recipe_id):
-    recipe = next((selection for selection in recipe_directory["recipes"] if selection["id"] == recipe_id), None)
-    if recipe is None:
-        return HttpResponse("Recipe not found", status=404)
-    
-    return render(request, 'recipe_info.html', {"recipe": recipe})
+class RecipeDetailView(DetailView):
+    model = Recipe
+    template_name = 'recipe_info.html'
