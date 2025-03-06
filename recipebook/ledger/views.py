@@ -1,13 +1,12 @@
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+
 from .models import Recipe
-from django.shortcuts import render
 
-def recipes_list(request):
-    recipes = Recipe.objects.all()
-    ctx = {
-        'recipes': recipes
-    }
-    return render(request, 'recipes_list.html', ctx)
+class RecipesListView(ListView):
+    model = Recipe
+    template_name = 'recipes_list.html'
 
-def recipe_info(request, id):
-    ctx = { 'recipe', Recipe.objects.get(id=id) }
-    return render(request, 'recipe_info.html', ctx)
+class RecipeDetailView(DetailView):
+    model = Recipe
+    template_name = 'recipe_info.html'
