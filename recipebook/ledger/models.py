@@ -15,4 +15,15 @@ class Recipe(models.Model):
     def get_absolute_url(self):
         return reverse('recipe_detail', args=[str(self.name)])
 
-
+class RecipeIngredient(models.Model):
+    quantity = models.CharField(max_length=100)
+    Ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='recipe'
+    )
+    Recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ingredients'
+    )
