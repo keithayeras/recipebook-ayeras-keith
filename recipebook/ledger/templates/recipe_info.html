@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en-US">
-<header>
-    <form method="POST" action="{% url 'logout' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Logout</button>
-    </form>
-</header>
-<head>
-    <title>Recipe Information</title>
-</head>
-<body>  
-    <h1>Recipe Book</h1>
+{% extends 'base.html' %}
+ 
+{% block content%}
     <h2>{{ recipe.name }}</h2>
     <h3>by {{ recipe.author }}</h3> <br>
     <h4>Ingredients:</h4>
@@ -23,3 +12,8 @@
 
 </body>
 </html>
+
+    <footer>
+        <a href = "{% url 'ledger:recipes_list' %}"> Return</a>
+    </footer>
+{% endblock%}
