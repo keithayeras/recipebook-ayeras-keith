@@ -7,6 +7,9 @@ class Profile(models.Model):
     name = models.CharField(max_length=50)
     bio = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
 
@@ -18,7 +21,7 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     name = models.CharField(max_length=100)
-    author = models.CharField(max_length=50)
+    author = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='recipes', default=None)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
