@@ -12,6 +12,17 @@
         {% endfor %}
     </ul>
 
+    <h3>Images</h3>
+    {% if recipe.images.all %}
+        {% for image in recipe.images.all %}
+            <img src="{{ image.image.url }}" alt="{{ image.description }}" style="max-width:300px; margin:10px;">
+        {% endfor %}
+    {% else %}
+        <p>No images uploaded for this recipe.</p>
+    {% endif %}
+    
+    <a href="{% url 'recipe_add_image' recipe.id %}">Upload New Image</a>
+    
 </body>
 </html>
 
