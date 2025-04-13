@@ -4,10 +4,11 @@ from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse_lazy
 
-from .forms import RecipeForm, RecipeIngredientForm, RecipeImageForm
+from .forms import RecipeForm, IngredientForm, RecipeIngredientForm, RecipeImageForm
 from django.views import View
-from .models import Recipe
+from .models import Recipe, Ingredient, RecipeIngredient, Profile
 
 class RecipesListView(LoginRequiredMixin, ListView):
     model = Recipe
@@ -17,41 +18,50 @@ class RecipeDetailView(LoginRequiredMixin, DetailView):
     model = Recipe
     template_name = 'recipe_info.html'
 
-    def get_object(self, queryset=None):
-        try:
-            return super().get_object(queryset)
-        except ObjectDoesNotExist:
-
-            return redirect('recipe_list')
-
 class RecipeCreateView(LoginRequiredMixin, CreateView):
     model = Recipe
     form_class = RecipeForm
     template_name = 'recipe_add.html'
+    success_url = reverse_lazy('ledger:recipe_add')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            context['ingredient_form'] = RecipeIngredientForm(self.request.POST)
-        else:
-            context['ingredient_form'] = RecipeIngredientForm()
+        context['ingredient_form'] = IngredientForm()
+        context['recipe_ingredient_form'] = RecipeIngredientForm()
         return context
-
+    
     def form_valid(self, form):
-        context = self.get_context_data()
-        ingredient_form = context['ingredient_form']
+        profile = get_object_or_404(Profile, user=self.request.user)
+        form.instance.author = profile
+        return super().form_valid(form)
 
-        if ingredient_form.is_valid():
-            form.instance.author = self.request.user
-            self.object = form.save()
+class IngredientCreateView(LoginRequiredMixin, CreateView):
+    model = Ingredient
+    form_class = IngredientForm
+    template_name = 'recipe_add.html'
 
-            ingredient = ingredient_form.save(commit=False)
-            ingredient.recipe = self.object
-            ingredient.save()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipe_form'] = RecipeForm()
+        context['recipe_ingredient_form'] = RecipeIngredientForm()
+        return context
+        
+    def get_success_url(self):
+        return reverse_lazy('ledger:ingredient_add')
 
-            return redirect(self.object.get_absolute_url())
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+class RecipeIngredientCreateView(LoginRequiredMixin, CreateView):
+    model = RecipeIngredient
+    form_class = RecipeIngredientForm
+    template_name = 'recipe_add.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipe_form'] = RecipeForm()
+        context['ingredient_form'] = IngredientForm()
+        return context
+        
+    def get_success_url(self):
+        return reverse_lazy('ledger:recipe_ingredient_add')
 
 class RecipeAddImageView(LoginRequiredMixin, View):
     template_name = 'recipe_image_add.html'
@@ -72,3 +82,7 @@ class RecipeAddImageView(LoginRequiredMixin, View):
             return redirect(recipe.get_absolute_url())
 
         return render(request, self.template_name, {'recipe': recipe, 'form': form})
+    
+    def get_success_url(self):
+        return reverse_lazy('ledger:recipe_image_add')
+

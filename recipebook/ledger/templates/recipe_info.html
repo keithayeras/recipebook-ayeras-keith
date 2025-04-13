@@ -15,18 +15,20 @@
     <h3>Images</h3>
     {% if recipe.images.all %}
         {% for image in recipe.images.all %}
+        <div style="margin-bottom: 15px;">
             <img src="{{ image.image.url }}" alt="{{ image.description }}" style="max-width:300px; margin:10px;">
+        </div>
         {% endfor %}
     {% else %}
         <p>No images uploaded for this recipe.</p>
     {% endif %}
     
-    <a href="{% url 'recipe_add_image' recipe.id %}">Upload New Image</a>
+    <a href="{% url 'ledger:recipe_image_add' recipe.pk %}">Upload New Image</a>
     
 </body>
 </html>
 
     <footer>
-        <a href = "{% url 'ledger:recipes_list' %}"> Return</a>
+        <a href = "{% url 'ledger:recipes_list' %}" class="btn btn-primary"> Return</a>
     </footer>
 {% endblock%}

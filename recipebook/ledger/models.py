@@ -18,6 +18,9 @@ class Ingredient(models.Model):
     
     def get_absolute_url(self):
         return reverse('ingredient_detail', args=[str(self.name)])
+    
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['name'], name='uniqueIngredient')]
 
 class Recipe(models.Model):
     name = models.CharField(max_length=100)
@@ -29,7 +32,11 @@ class Recipe(models.Model):
         return self.name
     
     def get_absolute_url(self):
-        return reverse('recipe_detail', args=[str(self.name)])
+        return reverse('ledger:recipe_info', args=[str(self.pk)])
+    
+    class Meta:
+        ordering = ['name']
+        constraints = [models.UniqueConstraint(fields=['name','author'], name='uniqueNamePerAuthor')]
 
 class RecipeIngredient(models.Model):
     quantity = models.CharField(max_length=100)
@@ -44,6 +51,9 @@ class RecipeIngredient(models.Model):
         related_name='ingredients'
     )
 
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['recipe','ingredient'], name='uniqueIngredientPerRecipe')]
+
 class RecipeImage(models.Model):
     image = models.ImageField(upload_to='recipe_images/')
     description = models.CharField(max_length=255)
@@ -51,3 +61,6 @@ class RecipeImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.recipe.name}"
+    
+    def get_absolute_url(self):
+         return reverse('recipe_image_add',args=[self.recipe.pk])
