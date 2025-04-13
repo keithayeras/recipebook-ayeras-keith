@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<a href="{% url 'ledger:recipes_list' %}" class="btn btn-primary">Back to List</a>
+<h2>Add a Recipe</h2>
+<form method="POST" action="{% url 'ledger:recipe_add' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Recipe</button>
+</form>
+
+<h2>Add an Ingredient</h2>
+<form method="POST" action="{% url 'ledger:ingredient_add' %}">
+    {% csrf_token %}
+    {{ ingredient_form.as_p }}
+    <button type="submit">Save Ingredient</button>
+</form>
+
+<h2>Add a Recipe Ingredient</h2>
+<form method="POST" action="{% url 'ledger:recipe_ingredient_add' %}">
+    {% csrf_token %}
+    {{ recipe_ingredient_form.as_p }}
+    <button type="submit">Save Recipe Ingredient</button>
+</form>
+{% endblock %}
