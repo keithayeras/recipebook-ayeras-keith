@@ -52,10 +52,10 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=['recipe','ingredient'], name='uniqueIngredientPerRecipe')]
+        constraints = [models.UniqueConstraint(fields=['Recipe','Ingredient'], name='uniqueIngredientPerRecipe')]
 
 class RecipeImage(models.Model):
-    image = models.ImageField(upload_to='recipe_images/')
+    image = models.ImageField(upload_to='recipe_images/', null=False)
     description = models.CharField(max_length=255)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="images")
 
